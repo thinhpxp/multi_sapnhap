@@ -1,3 +1,4 @@
+// /public/script.js - Phiên bản cuối cùng, hỗ trợ đa ngôn ngữ
 document.addEventListener('DOMContentLoaded', () => {
     // === KHÓA API (CHỈ DÀNH CHO MYSTERY BOX) ===
     const UNSPLASH_ACCESS_KEY = 'Ln1_SF9l3ee_fsc320rUZjfB5fgSVCZlMg2JbSdh_XY';
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isReverseMode = false;
     let provinceChoices, districtChoices, communeChoices;
     let newProvinceChoices, newCommuneChoices;
+    let translations = {}; // Biến cục bộ để giữ bản dịch
 
     // === CÁC HÀM TIỆN ÍCH ===
     function showNotification(message, type = 'loading') { notificationArea.textContent = message; notificationArea.className = type; notificationArea.classList.remove('hidden'); }
@@ -45,43 +47,63 @@ document.addEventListener('DOMContentLoaded', () => {
         choicesInstance.disable();
     }
 
+    // === HÀM DỊCH THUẬT ===
+    function applyTranslations() {
+        translations = window.translations || {};
+        document.querySelectorAll('[data-i18n-key]').forEach(el => {
+            const key = el.getAttribute('data-i18n-key');
+            if (translations[key]) {
+                // Sử dụng innerHTML để cho phép các thẻ con như <span>
+                el.innerHTML = translations[key];
+            }
+        });
+
+        // Cập nhật các thuộc tính
+        if (translations.pageTitle) document.title = translations.pageTitle;
+        const descEl = document.querySelector('meta[name="description"]');
+        if (descEl && translations.pageDescription) {
+            descEl.setAttribute('content', translations.pageDescription);
+        }
+    }
+
     // === CÁC HÀM KHỞI TẠO & GIAO DIỆN ===
     function initialize() {
-        const choicesConfig = { searchEnabled: true, searchPlaceholderValue: "Nhập để tìm kiếm...", itemSelectText: 'Chọn', removeItemButton: true, allowHTML: false };
+        applyTranslations(); // Dịch trang ngay từ đầu
 
-        provinceChoices = new Choices(provinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "Tìm tỉnh thành..." });
-        districtChoices = new Choices(districtSelectEl, { ...choicesConfig, searchPlaceholderValue: "Tìm quận huyện..." });
-        communeChoices = new Choices(communeSelectEl, { ...choicesConfig, searchPlaceholderValue: "Tìm phường xã..." });
-        newProvinceChoices = new Choices(newProvinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "Tìm tỉnh thành mới..." });
-        newCommuneChoices = new Choices(newCommuneSelectEl, { ...choicesConfig, searchPlaceholderValue: "Tìm phường xã mới..." });
+        const choicesConfig = { searchEnabled: true, itemSelectText: 'Chọn', removeItemButton: true };
+
+        provinceChoices = new Choices(provinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
+        districtChoices = new Choices(districtSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
+        communeChoices = new Choices(communeSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
+        newProvinceChoices = new Choices(newProvinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
+        newCommuneChoices = new Choices(newCommuneSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
 
         if (window.allProvincesData && window.allProvincesData.length > 0) {
             window.allProvincesData.sort((a, b) => a.code - b.code);
-            updateChoices(provinceChoices, 'Vui lòng chọn Tỉnh/Thành', window.allProvincesData);
+            updateChoices(provinceChoices, translations.oldProvincePlaceholder, window.allProvincesData);
         } else {
-            showNotification("Lỗi: Không thể tải dữ liệu địa chỉ cũ.", "error");
+            showNotification("Error: Could not load old address data.", "error");
         }
 
-        resetChoice(districtChoices, 'Vui lòng chọn Quận/Huyện');
-        resetChoice(communeChoices, 'Vui lòng chọn Phường/Xã');
-        resetChoice(newCommuneChoices, 'Vui lòng chọn Tỉnh/Thành trước');
+        resetChoice(districtChoices, translations.oldDistrictPlaceholder);
+        resetChoice(communeChoices, translations.oldCommunePlaceholder);
+        resetChoice(newCommuneChoices, translations.newCommunePlaceholder);
 
         addEventListeners();
-        loadNewProvincesDropdown(); // Tải dữ liệu cho dropdown mới
+        loadNewProvincesDropdown();
     }
 
     async function loadNewProvincesDropdown() {
-        resetChoice(newProvinceChoices, 'Đang tải danh sách tỉnh mới...');
+        resetChoice(newProvinceChoices, 'Loading...');
         try {
             const response = await fetch('/api/get-new-provinces');
-            if(!response.ok) throw new Error('Không thể tải danh sách tỉnh mới từ server.');
+            if(!response.ok) throw new Error('Could not fetch new provinces list from server.');
             const data = await response.json();
-            updateChoices(newProvinceChoices, 'Vui lòng chọn Tỉnh/Thành mới', data, 'province_code', 'name');
+            updateChoices(newProvinceChoices, translations.newProvincePlaceholder, data, 'province_code', 'name');
             newProvinceChoices.enable();
         } catch (error) {
             console.error(error);
-            resetChoice(newProvinceChoices, 'Lỗi khi tải danh sách tỉnh');
-            showNotification(error.message, 'error');
+            resetChoice(newProvinceChoices, 'Error loading provinces');
         }
     }
 
@@ -92,8 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.classList.add('hidden');
         lookupBtn.disabled = true;
         lookupDescription.textContent = isReverseMode
-            ? "Chọn địa chỉ mới để tìm các đơn vị hành chính cũ tương ứng."
-            : "Chọn địa chỉ cũ để tìm thông tin đơn vị hành chính mới tương ứng.";
+            ? translations.lookupDescriptionNewToOld
+            : translations.lookupDescriptionOldToNew;
     }
 
     // === LẮNG NGHE SỰ KIỆN ===
@@ -111,19 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Sự kiện cho tra cứu XUÔI ---
         provinceSelectEl.addEventListener('choice', (event) => {
-            resetChoice(districtChoices, 'Vui lòng chọn Quận/Huyện');
-            resetChoice(communeChoices, 'Vui lòng chọn Phường/Xã');
+            resetChoice(districtChoices, translations.oldDistrictPlaceholder);
+            resetChoice(communeChoices, translations.oldCommunePlaceholder);
             lookupBtn.disabled = true;
             const provinceCode = event.detail.value;
             if (!provinceCode) return;
             districtChoices.enable();
             const selectedProvince = window.allProvincesData.find(p => p.code == provinceCode);
             if (selectedProvince && selectedProvince.districts) {
-                updateChoices(districtChoices, 'Vui lòng chọn Quận/Huyện', selectedProvince.districts);
+                updateChoices(districtChoices, translations.oldDistrictPlaceholder, selectedProvince.districts);
             }
         });
         districtSelectEl.addEventListener('choice', (event) => {
-            resetChoice(communeChoices, 'Vui lòng chọn Phường/Xã');
+            resetChoice(communeChoices, translations.oldCommunePlaceholder);
             lookupBtn.disabled = true;
             const districtCode = event.detail.value;
             const provinceCode = provinceChoices.getValue(true);
@@ -132,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedProvince = window.allProvincesData.find(p => p.code == provinceCode);
             const selectedDistrict = selectedProvince?.districts.find(d => d.code == districtCode);
             if (selectedDistrict && selectedDistrict.wards) {
-                updateChoices(communeChoices, 'Vui lòng chọn Phường/Xã', selectedDistrict.wards);
+                updateChoices(communeChoices, translations.oldCommunePlaceholder, selectedDistrict.wards);
             }
         });
         communeSelectEl.addEventListener('choice', (event) => {
@@ -143,18 +165,17 @@ document.addEventListener('DOMContentLoaded', () => {
         newProvinceSelectEl.addEventListener('choice', async (event) => {
             const provinceCode = event.detail.value;
             if (!provinceCode) return;
-            resetChoice(newCommuneChoices, 'Đang tải danh sách xã...');
+            resetChoice(newCommuneChoices, translations.newCommuneLoading);
             lookupBtn.disabled = true;
             try {
                 const response = await fetch(`/api/get-new-wards?province_code=${provinceCode}`);
-                if(!response.ok) throw new Error('Không thể tải danh sách xã/phường.');
+                if(!response.ok) throw new Error('Could not fetch commune list.');
                 const data = await response.json();
-                updateChoices(newCommuneChoices, 'Vui lòng chọn Phường/Xã mới', data, 'ward_code', 'name');
+                updateChoices(newCommuneChoices, translations.newCommunePlaceholder, data, 'ward_code', 'name');
                 newCommuneChoices.enable();
             } catch (error) {
                 console.error(error);
-                resetChoice(newCommuneChoices, 'Lỗi khi tải danh sách xã');
-                showNotification(error.message, 'error');
+                resetChoice(newCommuneChoices, 'Error loading communes');
             }
         });
         newCommuneSelectEl.addEventListener('choice', (event) => {
@@ -166,83 +187,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // === LOGIC TRA CỨU CHÍNH - ĐÃ KẾT NỐI VỚI API BACK-END ===
     // =================================================================
     async function handleForwardLookup() {
-        console.log("============== BẮT ĐẦU TRA CỨU XUÔI (API) ==============");
         const selectedCommune = communeChoices.getValue();
         if (!selectedCommune || !selectedCommune.value) {
-            alert('Vui lòng chọn một Phường/Xã.');
+            alert(translations.alertSelectOldCommune);
             return;
         }
 
         const oldWardCode = selectedCommune.value;
         const fullOldAddress = `${selectedCommune.label}, ${districtChoices.getValue().label}, ${provinceChoices.getValue().label}`;
 
-        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">Địa chỉ cũ:</span> ${fullOldAddress}</p></div>`;
-        newAddressDisplay.innerHTML = `<p>Đang tra cứu, vui lòng chờ...</p>`;
+        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${translations.oldAddressLabel}</span> ${fullOldAddress}</p></div>`;
+        newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
         resultContainer.classList.remove('hidden');
 
         try {
             const response = await fetch(`/api/lookup-forward?code=${oldWardCode}`);
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Lỗi không xác định từ máy chủ.');
-            }
+            if (!response.ok) throw new Error(data.error || 'Server error');
 
             if (data.changed === false) {
-                newAddressDisplay.innerHTML = `<p class="no-change">Địa chỉ này không có thông tin sáp nhập.</p>`;
+                newAddressDisplay.innerHTML = `<p class="no-change">${translations.noChangeMessage}</p>`;
             } else {
-                // --- THAY ĐỔI: Thêm mã code vào kết quả ---
-                const newAddressForDisplay = `${data.new_ward_name} <span class="unit-code">(Code: ${data.new_ward_code})</span>, ${data.new_province_name} <span class="unit-code">(Code: ${data.new_province_code})</span>`;
-                const newAddressForCopy = `${data.new_ward_name} (Code: ${data.new_ward_code}), ${data.new_province_name} (Code: ${data.new_province_code})`;
-                let resultsHtml = `<div class="address-line"><p><span class="label">Đã sáp nhập thành:</span> ${newAddressForDisplay}</p><button class="copy-btn" title="Copy địa chỉ mới" data-copy-text="${newAddressForCopy}">${copyIconSvg}</button></div>`;
+                const newAddressForDisplay = `${data.new_ward_name}, ${data.new_province_name}`;
+                let resultsHtml = `<div class="address-line"><p><span class="label">${translations.newAddressLabel}</span> ${newAddressForDisplay}</p><button class="copy-btn" title="Copy" data-copy-text="${newAddressForDisplay}">${copyIconSvg}</button></div>`;
                 newAddressDisplay.innerHTML = resultsHtml;
             }
         } catch (error) {
-            console.error('Lỗi khi tra cứu xuôi:', error);
-            newAddressDisplay.innerHTML = `<p class="error">Đã xảy ra lỗi: ${error.message}</p>`;
+            newAddressDisplay.innerHTML = `<p class="error">${error.message}</p>`;
         }
-
     }
 
     async function handleReverseLookup() {
-        console.log("============== BẮT ĐẦU TRA CỨU NGƯỢC (API) ==============");
         const selectedNewCommune = newCommuneChoices.getValue();
         if (!selectedNewCommune || !selectedNewCommune.value) {
-             alert('Vui lòng chọn một Phường/Xã mới từ danh sách.');
+             alert(translations.alertSelectNewCommune);
             return;
         }
 
         const newWardCode = selectedNewCommune.value;
         const fullNewAddress = `${selectedNewCommune.label}, ${newProvinceChoices.getValue().label}`;
 
-        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">Địa chỉ mới:</span> ${fullNewAddress}</p></div>`;
-        newAddressDisplay.innerHTML = `<p>Đang tra cứu, vui lòng chờ...</p>`;
+        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${translations.newAddressLabel.replace(':', '')}</span> ${fullNewAddress}</p></div>`;
+        newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
         resultContainer.classList.remove('hidden');
 
         try {
             const response = await fetch(`/api/lookup-reverse?code=${newWardCode}`);
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Lỗi không xác định từ máy chủ.');
-            }
+            if (!response.ok) throw new Error(data.error || 'Server error');
 
             if (data.length > 0) {
-                 // --- THAY ĐỔI: Thêm mã code vào kết quả ---
                  const oldUnitsFullAddresses = data.map(record => {
-                    // Lưu ý: Mã quận/huyện và tỉnh cũ không có sẵn trong bảng mapping, chúng ta chỉ hiển thị những gì có.
-                    return `<li>${record.old_ward_name} <span class="unit-code">(Code: ${record.old_ward_code})</span>, ${record.old_district_name}, ${record.old_province_name}</li>`;
+                    return `<li>${record.old_ward_name}, ${record.old_district_name}, ${record.old_province_name}</li>`;
                 }).join('');
-                newAddressDisplay.innerHTML = `<p class="label" style="text-align:left; margin-bottom:5px;">Các đơn vị cũ hợp thành:</p><ul class="old-units-list">${oldUnitsFullAddresses}</ul>`;
+                newAddressDisplay.innerHTML = `<p class="label">${translations.mergedFromLabel}</p><ul class="old-units-list">${oldUnitsFullAddresses}</ul>`;
             } else {
-                newAddressDisplay.innerHTML = `<p class="no-change">Địa chỉ này là một đơn vị hành chính mới và không có dữ liệu về các đơn vị cũ đã hợp thành.</p>`;
+                newAddressDisplay.innerHTML = `<p class="no-change">${translations.noDataFoundMessage}</p>`;
             }
         } catch (error) {
-             console.error('Lỗi khi tra cứu ngược:', error);
-            newAddressDisplay.innerHTML = `<p class="error">Đã xảy ra lỗi: ${error.message}</p>`;
+            newAddressDisplay.innerHTML = `<p class="error">${error.message}</p>`;
         }
     }
-
 
     // === HÀM PHỤ TRỢ KHÁC ===
     function handleCopy(event) {
@@ -258,10 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.classList.remove('copied');
                 button.disabled = false;
             }, 2000);
-        }).catch(err => {
-            console.error('Lỗi khi copy: ', err);
-            alert('Không thể sao chép.');
-        });
+        }).catch(err => { console.error('Lỗi khi copy: ', err); });
     }
 
     async function fetchRandomImage() {
@@ -274,11 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const apiUrl = `https://api.unsplash.com/photos/random?client_id=${UNSPLASH_ACCESS_KEY}&query=vietnam&orientation=portrait`;
         try {
             const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error(`Lỗi từ Unsplash: ${response.statusText}`);
+            if (!response.ok) throw new Error('Unsplash API error');
             const data = await response.json();
             const newImage = new Image();
             newImage.src = data.urls.regular;
-            newImage.alt = data.alt_description || "Ảnh ngẫu nhiên từ Unsplash";
+            newImage.alt = data.alt_description || "Random image from Unsplash";
             newImage.style.opacity = '0';
             newImage.onload = () => {
                 mysteryBox.innerHTML = '';
@@ -286,10 +288,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => { newImage.style.opacity = '1'; }, 50);
                 mysteryBox.classList.remove('loading-state');
             };
-            newImage.onerror = () => { throw new Error("Không thể tải được tệp ảnh từ Unsplash."); }
+            newImage.onerror = () => { throw new Error("Could not load image file."); }
         } catch (error) {
-            console.error("Lỗi khi lấy ảnh:", error);
-            mysteryBox.innerHTML = `<p style="color: red; font-size: 0.9em;">Không thể tải ảnh. Có thể đã hết lượt yêu cầu API. Vui lòng thử lại sau.</p>`;
+            console.error("Error fetching image:", error);
+            mysteryBox.innerHTML = `<p style="color: red; font-size: 0.9em;">Could not load image.</p>`;
             mysteryBox.classList.remove('loading-state');
         }
     }
