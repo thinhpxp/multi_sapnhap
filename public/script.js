@@ -1,5 +1,10 @@
 // /public/script.js - Phiên bản cuối cùng, hỗ trợ đa ngôn ngữ
 document.addEventListener('DOMContentLoaded', () => {
+     // Lấy bản dịch hoặc một đối tượng rỗng nếu không có
+    const translations = window.translations || {}
+    // Hàm tiện ích để lấy bản dịch một cách an toàn
+    const t = (key, fallback = '') => translations[key] || fallback;
+
     // === KHÓA API (CHỈ DÀNH CHO MYSTERY BOX) ===
     const UNSPLASH_ACCESS_KEY = 'Ln1_SF9l3ee_fsc320rUZjfB5fgSVCZlMg2JbSdh_XY';
 
@@ -29,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isReverseMode = false;
     let provinceChoices, districtChoices, communeChoices;
     let newProvinceChoices, newCommuneChoices;
-    let translations = {}; // Biến cục bộ để giữ bản dịch
+    // let translations = {}; // Biến cục bộ để giữ bản dịch
 
     // === CÁC HÀM TIỆN ÍCH ===
     function showNotification(message, type = 'loading') { notificationArea.textContent = message; notificationArea.className = type; notificationArea.classList.remove('hidden'); }
@@ -49,61 +54,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === HÀM DỊCH THUẬT ===
     function applyTranslations() {
-        translations = window.translations || {};
         document.querySelectorAll('[data-i18n-key]').forEach(el => {
             const key = el.getAttribute('data-i18n-key');
-            if (translations[key]) {
-                // Sử dụng innerHTML để cho phép các thẻ con như <span>
-                el.innerHTML = translations[key];
-            }
+            el.innerHTML = t(key, el.textContent); // Dùng text cũ làm fallback
         });
 
-        // Cập nhật các thuộc tính
-        if (translations.pageTitle) document.title = translations.pageTitle;
+        document.title = t('pageTitle', "Tra Cứu Sáp Nhập");
         const descEl = document.querySelector('meta[name="description"]');
-        if (descEl && translations.pageDescription) {
-            descEl.setAttribute('content', translations.pageDescription);
-        }
+        if (descEl) descEl.setAttribute('content', t('pageDescription'));
     }
 
     // === CÁC HÀM KHỞI TẠO & GIAO DIỆN ===
     function initialize() {
         applyTranslations(); // Dịch trang ngay từ đầu
+        const choicesConfig = { searchEnabled: true, itemSelectText: 'Chọn', removeItemButton: true, searchPlaceholderValue: "..." };
+        provinceChoices = new Choices(provinceSelectEl, { ...choicesConfig });
+        districtChoices = new Choices(districtSelectEl, { ...choicesConfig });
+        communeChoices = new Choices(communeSelectEl, { ...choicesConfig });
+        newProvinceChoices = new Choices(newProvinceSelectEl, { ...choicesConfig });
+        newCommuneChoices = new Choices(newCommuneSelectEl, { ...choicesConfig });
 
-        const choicesConfig = { searchEnabled: true, itemSelectText: 'Chọn', removeItemButton: true };
-
-        provinceChoices = new Choices(provinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
-        districtChoices = new Choices(districtSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
-        communeChoices = new Choices(communeSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
-        newProvinceChoices = new Choices(newProvinceSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
-        newCommuneChoices = new Choices(newCommuneSelectEl, { ...choicesConfig, searchPlaceholderValue: "..." });
+        // Cập nhật lại placeholder sau khi khởi tạo
+        provinceChoices.setPlaceholder(t('oldProvincePlaceholder'));
+        districtChoices.setPlaceholder(t('oldDistrictPlaceholder'));
+        communeChoices.setPlaceholder(t('oldCommunePlaceholder'));
+        newProvinceChoices.setPlaceholder(t('newProvincePlaceholder'));
+        newCommuneChoices.setPlaceholder(t('newCommunePlaceholder'));
 
         if (window.allProvincesData && window.allProvincesData.length > 0) {
             window.allProvincesData.sort((a, b) => a.code - b.code);
-            updateChoices(provinceChoices, translations.oldProvincePlaceholder, window.allProvincesData);
+            updateChoices(provinceChoices, t('oldProvincePlaceholder'), window.allProvincesData);
         } else {
-            showNotification("Error: Could not load old address data.", "error");
+            showNotification(t('errorLoadOldData', "Lỗi: Không thể tải dữ liệu địa chỉ cũ."), "error");
         }
 
-        resetChoice(districtChoices, translations.oldDistrictPlaceholder);
-        resetChoice(communeChoices, translations.oldCommunePlaceholder);
-        resetChoice(newCommuneChoices, translations.newCommunePlaceholder);
+        resetChoice(districtChoices, t('oldDistrictPlaceholder'));
+        resetChoice(communeChoices, t('oldCommunePlaceholder'));
+        resetChoice(newCommuneChoices, t('newCommunePlaceholder'));
 
         addEventListeners();
         loadNewProvincesDropdown();
     }
 
-    async function loadNewProvincesDropdown() {
-        resetChoice(newProvinceChoices, 'Loading...');
+     async function loadNewProvincesDropdown() {
+        resetChoice(newProvinceChoices, t('newProvinceLoading'));
         try {
             const response = await fetch('/api/get-new-provinces');
-            if(!response.ok) throw new Error('Could not fetch new provinces list from server.');
+            if(!response.ok) throw new Error(t('errorFetchNewProvinces', 'Không thể tải danh sách tỉnh mới từ server.'));
             const data = await response.json();
-            updateChoices(newProvinceChoices, translations.newProvincePlaceholder, data, 'province_code', 'name');
+            updateChoices(newProvinceChoices, t('newProvincePlaceholder'), data, 'province_code', 'name');
             newProvinceChoices.enable();
         } catch (error) {
             console.error(error);
-            resetChoice(newProvinceChoices, 'Error loading provinces');
+            resetChoice(newProvinceChoices, t('newProvinceError'));
+            showNotification(error.message, 'error');
         }
     }
 
@@ -114,19 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.classList.add('hidden');
         lookupBtn.disabled = true;
         lookupDescription.textContent = isReverseMode
-            ? translations.lookupDescriptionNewToOld
-            : translations.lookupDescriptionOldToNew;
+            ? t('lookupDescriptionNewToOld')
+            : t('lookupDescriptionOldToNew');
     }
 
     // === LẮNG NGHE SỰ KIỆN ===
-    function addEventListeners() {
+     function addEventListeners() {
         modeToggle.addEventListener('change', toggleLookupUI);
         lookupBtn.addEventListener('click', () => {
-            if (isReverseMode) {
-                handleReverseLookup();
-            } else {
-                handleForwardLookup();
-            }
+            if (isReverseMode) handleReverseLookup();
+            else handleForwardLookup();
         });
         if (mysteryBox) mysteryBox.addEventListener('click', fetchRandomImage);
         resultContainer.addEventListener('click', handleCopy);
@@ -183,13 +184,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-   // =================================================================
+    // =================================================================
     // === LOGIC TRA CỨU CHÍNH - ĐÃ KẾT NỐI VỚI API BACK-END ===
     // =================================================================
-    async function handleForwardLookup() {
+     async function handleForwardLookup() {
         const selectedCommune = communeChoices.getValue();
         if (!selectedCommune || !selectedCommune.value) {
-            alert(translations.alertSelectOldCommune);
+            alert(t('alertSelectOldCommune'));
             return;
         }
 
@@ -197,7 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullOldAddress = `${selectedCommune.label}, ${districtChoices.getValue().label}, ${provinceChoices.getValue().label}`;
 
         oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${translations.oldAddressLabel}</span> ${fullOldAddress}</p></div>`;
-        newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
+        // newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
+        newAddressDisplay.innerHTML = `<p>${t('lookingUp')}</p>`;
         resultContainer.classList.remove('hidden');
 
         try {
@@ -220,15 +222,17 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleReverseLookup() {
         const selectedNewCommune = newCommuneChoices.getValue();
         if (!selectedNewCommune || !selectedNewCommune.value) {
-             alert(translations.alertSelectNewCommune);
+             alert(t('alertSelectNewCommune'));
             return;
         }
 
         const newWardCode = selectedNewCommune.value;
         const fullNewAddress = `${selectedNewCommune.label}, ${newProvinceChoices.getValue().label}`;
 
-        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${translations.newAddressLabel.replace(':', '')}</span> ${fullNewAddress}</p></div>`;
-        newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
+        // oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${translations.newAddressLabel.replace(':', '')}</span> ${fullNewAddress}</p></div>`;
+        // newAddressDisplay.innerHTML = `<p>${translations.newCommuneLoading}</p>`;
+        oldAddressDisplay.innerHTML = `<div class="address-line"><p><span class="label">${t('newAddressLabel').replace(':', '')}</span> ${fullNewAddress}</p></div>`;
+        newAddressDisplay.innerHTML = `<p>${t('lookingUp')}</p>`;
         resultContainer.classList.remove('hidden');
 
         try {
