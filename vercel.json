@@ -2,23 +2,23 @@
   "rewrites": [
     {
       "source": "/vi",
-      "destination": "/pages/vi.html"
+      "destination": "/vi.html"
     },
     {
       "source": "/vi/:path*",
-      "destination": "/pages/vi.html"
+      "destination": "/vi.html"
     },
     {
       "source": "/en",
-      "destination": "/pages/en.html"
+      "destination": "/en.html"
     },
     {
       "source": "/en/:path*",
-      "destination": "/pages/en.html"
+      "destination": "/en.html"
     },
     {
       "source": "/",
-      "destination": "/pages/vi.html"
+      "destination": "/vi.html"
     }
   ]
 }
