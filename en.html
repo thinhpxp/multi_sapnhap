@@ -8,20 +8,28 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-WFV4ML8F');</script>
     <!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+     <!-- === DỮ LIỆU CÓ CẤU TRÚC THEO QUY ĐỊNH GOOGLE (SCHEMA.ORG) === -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Vietnam Administrative Unit Merger Lookup",
+      "url": "https://sapnhap.org/en"
+    }
+    </script>
 
     <!-- ================= SEO ĐA NGÔN NGỮ ================= -->
     <title data-i18n-key="pageTitle">Vietnam Administrative Unit Merger Lookup 2025</title>
     <meta name="description" data-i18n-key="pageDescription" content="A quick and accurate tool to look up information about the merger and renaming of commune-level administrative units in Vietnam.">
-
     <link rel="canonical" href="https://sapnhap.org/en" />
     <link rel="alternate" hreflang="vi-VN" href="https://sapnhap.org/vi" />
     <link rel="alternate" hreflang="en-US" href="https://sapnhap.org/en" />
     <link rel="alternate" hreflang="x-default" href="https://sapnhap.org/vi" />
     <!-- ==================================================== -->
-
-    <link rel="icon" href="/favicon.png" type="image/x-icon">
 
     <!-- ================= SEO CHO MẠNG XÃ HỘI (OPEN GRAPH) ================= -->
     <meta property="og:title" content="Vietnam Administrative Unit Merger Lookup" />
@@ -41,25 +49,20 @@
     <meta name="twitter:image:alt" content="Interface of the administrative unit lookup page">
     <meta name="twitter:site" content="@thinhpxp">
 
-    <!-- === DỮ LIỆU CÓ CẤU TRÚC (SCHEMA.ORG) === -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Vietnam Administrative Unit Merger Lookup",
-      "url": "https://sapnhap.org/en"
-    }
-    </script>
+    <!-- === FAVICON === -->
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
 
     <!-- === CSS === -->
     <link rel="stylesheet" href="/choices.min.css" />
     <link rel="stylesheet" href="/style.css">
+
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WFV4ML8F"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+
     <div class="container">
         <!-- Cột bên trái -->
         <div class="left-column">
@@ -106,7 +109,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <button id="lookup-btn" disabled data-i18n-key="lookupButton">Look Up</button>
                 </div>
 
-                <div id="notification-area"></div>
+                <!-- <div id="notification-area"></div> -->
+                <!-- Ô HIỂN THỊ KẾT QUẢ -->
 
                 <div id="result-container" class="hidden">
                     <h2 data-i18n-key="resultsTitle">Lookup Results</h2>
@@ -119,26 +123,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         </div>
         <!-- Cột bên phải (giữ nguyên không cần data-i18n-key) -->
+        <!-- Nội dung tiếng Anh tự nhập không cần sử dụng /locales/en.js -->
         <div class="right-column">
-              <h2>Hướng dẫn & Thông tin</h2>
-             <p class="intro" style="font-size:0.8em; text-align: left; margin-bottom: 5px;">+ Dùng switch để chuyển giữa 2 chế độ tra cứu.<br>+ Một số địa phương bị tách làm nhiều phần, mỗi phần sáp nhập vào nhiều nơi khác nhau.</p>
-            <!-- PHẦN HÌNH ẢNH -->
-             <!-- === ĐOẠN MÃ MỚI CHO 2 CỘT QR === -->
+              <h2>DON'T WORRY</h2>
+             <p class="intro" style="font-size:0.8em; text-align: left; margin-bottom: 5px;">
+                 As of July 1, 2025, Vietnam has merged many provinces and cities. Smaller administrative units within them have also been consolidated. Consequently, many familiar old addresses have disappeared, replaced by new and unfamiliar place names.
+             </p>
+            <p class="intro" style="font-size:0.8em; text-align: left; margin-bottom: 5px;">
+                 With this tool, tourists will no longer have to worry about finding the addresses of tourist destinations in Vietnam.
+             </p>
+           <!-- PHẦN HÌNH ẢNH -->
             <div class="image-container-grid">
                 <!-- Cột 1 -->
                 <div class="qr-column">
-                    <p class="qr-caption" style="text-align: center">Đóng góp cho dự án</p>
-                    <p style="font-size: 0.8em; color: var(--text-muted); text-align: center; margin-top: 10px;">Bạn hoàn toàn có thể dành một ly cà phê để góp phần duy trì website này.</p>
-                    <p style="font-size: 0.8em; color: var(--text-muted); text-align: center; margin-top: 10px;">Cám ơn và chúc bạn điều tuyệt vời nhất !</p>
-                </div>
-                <!-- Cột 2 -->
-                <div class="qr-column">
-                    <img src="/thinhqr.webp" alt="Mã QR">
+                    <p class="qr-caption" style="font-size: 0.8em; color: #05233d; text-align: center; margin-top: 10px;">My content is free, but the domain and web server are not. If you want to support me, you can buy me a coffee!</p>
+                    <p class="qr-caption" style="font-size: 0.8em; color: #05233d; text-align: center; margin-top: 10px;">Thanks a million!</p>
+
+                    <!-- CHÈN ẢNH VÀO ĐÂY -->
+                    <div class="coffee-image-wrapper">
+                        <a href="https://ko-fi.com/thinhpxp" target="_blank" rel="noopener noreferrer" class="buy-coffee-link">
+                            <img src="/buymeacoffee.webp" alt="Buy me a Coffee Support" class="coffee-support-image">
+                        </a>
+                        <p style="font-size: 0.8em; text-align: left; color: #01053b;">Email: thinhpxp@gmail.com | Phone:+84 0935691563</p>
+                    </div>
+                    <!-- KẾT THÚC PHẦN CHÈN ẢNH -->
                 </div>
             </div>
-<!-- =================================== -->
-            <p style="font-size: 0.8em; text-align: left;">Cung cấp dịch vụ liên quan đến Thương Mại Điện Tử | Thực hiện các thủ tục về TMĐT | Thông báo/đăng ký website, ứng dụng với bộ công thương | Đăng ký tích vàng ZALO OA.</p>
-            <p style="font-size: 0.9em; text-align: left; color: #01053b;">Email: thinhpxp@gmail.com | Phone: 0935 691 563</p>
+            <!-- =================================== -->
+
             <!-- === HỘP MÙ VUI VẺ === -->
             <div class="mystery-box-container">
                 <div id="mystery-box">
@@ -162,7 +174,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <script src="/choices.min.js" defer></script>
     <script src="/data/old_data.js" defer></script>
-    <script src="/locales/en.js" defer></script> <!-- Nạp tệp ngôn ngữ Tiếng Việt -->
+    <script src="/locales/en.js" defer></script> <!-- Nạp tệp ngôn ngữ Tiếng Anh -->
     <script src="/script.js" defer></script>
 </body>
 </html>

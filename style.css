@@ -500,6 +500,36 @@ button#lookup-btn:disabled {
     height: auto; /* Chiều cao tự động điều chỉnh để giữ đúng tỷ lệ */
     display: block; /* Loại bỏ khoảng trắng thừa bên dưới ảnh */
 }
+
+/* CSS cho phần hỗ trợ Buy me a Coffee */
+
+/* Bao quanh ảnh để dễ dàng căn chỉnh */
+.qr-column .coffee-image-wrapper {
+    text-align: center; /* Căn giữa ảnh trong cột */
+    margin-top: 5px;  /* Khoảng cách phía trên ảnh */
+}
+
+/* Định dạng cho ảnh */
+.qr-column .coffee-support-image {
+    max-width: 100%; /* Đảm bảo ảnh không bị tràn ra ngoài cột */
+    height: auto;   /* Giữ tỉ lệ khung hình của ảnh */
+    width: 190px;   /* Đặt chiều rộng mong muốn cho ảnh (ví dụ: 150px). Điều chỉnh theo ý bạn. */
+    aspect-ratio: auto;
+    display: inline-block; /* Giúp text-align center hoạt động tốt */
+    border-radius: 8px; /* Bo tròn nhẹ góc ảnh (tùy chọn) */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm đổ bóng nhẹ cho ảnh (tùy chọn) */
+}
+.qr-column p qr-caption { /* Áp dụng cho tất cả p trừ .qr-caption */
+    color: var(--text-muted); /* Sử dụng biến CSS nếu có */
+    font-size: 0.85em; /* Tăng nhẹ font size để dễ đọc hơn */
+}
+
+/* Định dạng cho chú thích ảnh */
+.qr-column .qr-caption{
+    font-weight: bold; /* In đậm chú thích */
+    margin-bottom: 5px; /* Khoảng cách dưới chú thích */
+}
+
 /* === CSS CHO HỘP MÙ VUI VẺ === */
 .mystery-box-container {
     margin-top: 10px;
