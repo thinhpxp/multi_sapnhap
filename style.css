@@ -600,3 +600,74 @@ button#lookup-btn:disabled {
     margin-left: 8px;
     font-style: italic;
 }
+
+/* Style chung cho container chứa các liên kết ngôn ngữ */
+.language-links-container {
+    text-align: center;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center; /* Căn giữa các liên kết */
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
+    gap: 10px; /* Khoảng cách giữa các liên kết và dấu phân cách */
+    font-size: 1em;
+}
+
+/* Style cho từng liên kết ngôn ngữ */
+.language-link {
+    text-decoration: none;
+    color: var(--primary-color, #007bff); /* Màu xanh dương mặc định */
+    padding: 8px 15px;
+    border-radius: 20px; /* Bo tròn nhiều để trông giống nút */
+    border: 1px solid transparent; /* Viền trong suốt ban đầu */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    display: inline-flex; /* Dùng flex để căn chỉnh name và code */
+    align-items: center;
+    gap: 6px;
+}
+
+/* Style cho ngôn ngữ đang được chọn (ví dụ: làm đậm hoặc đổi màu) */
+/* Bạn cần JavaScript để thêm class này khi trang được tải hoặc người dùng chọn ngôn ngữ */
+.language-link.current-lang {
+    background-color: var(--primary-color, #007bff);
+    color: #fff; /* Chữ trắng trên nền màu */
+    border-color: var(--primary-color, #007bff);
+    font-weight: bold;
+}
+
+.language-link:not(.current-lang):hover {
+    background-color: var(--hover-link-bg, #e9ecef); /* Màu nền nhẹ khi rê chuột */
+    color: var(--primary-color, #007bff);
+    border-color: var(--primary-color, #007bff); /* Thêm viền khi hover */
+}
+
+/* Style cho tên và mã ngôn ngữ */
+.language-link .lang-name {
+    font-weight: 500;
+}
+
+.language-link .lang-code {
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+/* Dấu phân cách */
+.separator {
+    color: var(--text-muted, #6c757d);
+    font-size: 1.2em;
+    display: inline-block; /* Đảm bảo nó hiển thị đúng */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .language-links-container {
+        flex-direction: column; /* Xếp chồng các liên kết */
+        gap: 10px;
+    }
+    .separator {
+        display: none; /* Ẩn dấu phân cách khi xếp chồng */
+    }
+    .language-link {
+        margin: 5px 0; /* Thêm margin khi xếp chồng */
+    }
+}
