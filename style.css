@@ -627,7 +627,7 @@ button#lookup-btn:disabled {
 }
 
 /* Style cho ngôn ngữ đang được chọn (ví dụ: làm đậm hoặc đổi màu) */
-/* Bạn cần JavaScript để thêm class này khi trang được tải hoặc người dùng chọn ngôn ngữ */
+/* Bạn cần JavaScript để thêm class này khi trang được tải / người dùng chọn ngôn ngữ */
 .language-link.current-lang {
     background-color: var(--primary-color, #007bff);
     color: #fff; /* Chữ trắng trên nền màu */
