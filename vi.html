@@ -69,19 +69,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="left-column-content-wrapper">
                 <h1 data-i18n-key="mainHeading">Tra cứu địa chỉ sáp nhập</h1>
                  <!-- === LIÊN KẾT CHUYỂN ĐỔI NGÔN NGỮ === -->
-                <div class="language-links-container">
-                    <a href="https://multi-sapnhap.vercel.app/en/" class="language-link lang-en">
-                        <span class="lang-name">English (US)</span>
-                        <span class="lang-code">EN</span>
-                    </a>
-                    <span class="separator">|</span> <!-- Dấu phân cách -->
-                    <a href="https://multi-sapnhap.vercel.app/vi/" class="language-link lang-vi">
-                        <span class="lang-name">Tiếng Việt</span>
-                        <span class="lang-code">VI</span>
-                    </a>
-                    <!-- Thêm các liên kết ngôn ngữ khác nếu có -->
+                <div id="language-switcher">
+                    <a href="/vi" class="active">Tiếng Việt</a> | <a href="/en">English</a>
                 </div>
-            <!-- === KẾT THÚC LIÊN KẾT CHUYỂN ĐỔI NGÔN NGỮ === -->
+                <!-- === KẾT THÚC LIÊN KẾT CHUYỂN ĐỔI NGÔN NGỮ === -->
                 <p id="lookup-description" data-i18n-key="lookupDescriptionOldToNew">Chọn địa chỉ cũ để tìm thông tin đơn vị hành chính mới tương ứng.</p>
 
                 <div class="lookup-mode-container">
@@ -167,10 +158,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <footer style="text-align: center; padding: 10px; margin-top: 10px; font-size: 0.9em; color: var(--text-muted);">
-        <!-- Nút chuyển đổi ngôn ngữ -->
-        <div id="language-switcher">
-            <a href="/vi" class="active">Tiếng Việt</a> | <a href="/en">English</a>
-        </div>
+
         <a href="/vi" data-i18n-key="footerHome">Trang chủ</a> |
         <a href="/vi/about" data-i18n-key="footerAbout">Giới thiệu</a> |
         <a href="/vi/contact" data-i18n-key="footerContact">Liên hệ</a>
