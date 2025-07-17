@@ -51,5 +51,6 @@ window.translations = {
   // Footer
   "footerHome": "Home",
   "footerAbout": "About",
-  "footerContact": "Contact"
+  "footerContact": "Contact",
+  "footerPolicies": "Policies"
 };
