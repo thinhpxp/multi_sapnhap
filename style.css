@@ -478,7 +478,7 @@ button#lookup-btn:disabled {
 
 .qr-column img {
     width: 100%;            /* Ảnh co giãn theo chiều rộng của cột */
-    height: auto;
+    height: 80%;
     aspect-ratio: 616 / 943; /* Giữ đúng tỷ lệ ảnh bạn yêu cầu */
     object-fit: cover;      /* Đảm bảo ảnh lấp đầy khung mà không bị méo */
     border-radius: 6px;
