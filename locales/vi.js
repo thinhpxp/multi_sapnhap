@@ -51,5 +51,6 @@ window.translations = {
   // Footer
   "footerHome": "Trang chủ",
   "footerAbout": "Giới thiệu",
-  "footerContact": "Liên hệ"
+  "footerContact": "Liên hệ",
+  "footerPolicies": "Chính sách"
 };
