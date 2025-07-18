@@ -1,16 +1,16 @@
 // /api/export-data.js
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
+// BƯỚC 2: THAY ĐỔI CỐT LÕI - Import trực tiếp thay vì đọc tệp
+import { allProvincesData } from '../../public/data/old_data.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
 
-// Hàm để tìm chi tiết đơn vị cũ từ tệp old_data.js
-function findOldUnitDetails(wardCode, allProvincesData) {
-    for (const province of allProvincesData) {
+// Hàm này vẫn giữ nguyên
+function findOldUnitDetails(wardCode, oldData) {
+    for (const province of oldData) {
         for (const district of province.districts) {
             for (const ward of district.wards) {
                 if (ward.code === wardCode) {
@@ -29,7 +29,7 @@ export default async function handler(request, response) {
   try {
     console.log("API export-data: Bắt đầu xử lý.");
 
-    // 1. Lấy dữ liệu từ Supabase
+    // 1. Lấy dữ liệu từ Supabase (giữ nguyên)
     const { data: mappingData, error: mappingError } = await supabase.from('mapping').select('*');
     if (mappingError) throw mappingError;
 
@@ -41,16 +41,10 @@ export default async function handler(request, response) {
 
     console.log(`API export-data: Đã lấy thành công ${mappingData.length} bản ghi mapping từ Supabase.`);
 
-    // 2. Đọc tệp old_data.js từ hệ thống tệp của Vercel
-    // Vercel sẽ đặt thư mục public của bạn ở đâu đó trong hệ thống
-    const oldDataPath = path.resolve('./public/data/old_data.js');
-    // Đọc tệp, loại bỏ phần "window.allProvincesData = " và dấu ; ở cuối để nó trở thành JSON hợp lệ
-    const oldDataFileContent = fs.readFileSync(oldDataPath, 'utf8');
-    const oldDataJsonString = oldDataFileContent.replace('window.allProvincesData = ', '').slice(0, -1);
-    const allProvincesData = JSON.parse(oldDataJsonString);
-    console.log("API export-data: Đã đọc và phân tích thành công tệp old_data.js.");
+    // 2. Dữ liệu cũ đã được import trực tiếp, không cần đọc tệp nữa
+    console.log("API export-data: Dữ liệu cũ đã được nạp thành công qua import.");
 
-    // 3. Tổng hợp dữ liệu
+    // 3. Tổng hợp dữ liệu (giữ nguyên)
     const consolidatedList = mappingData.map(mappingRecord => {
         const newWard = newWardsData.find(w => w.ward_code === mappingRecord.new_ward_code);
         const newProvince = newWard ? newProvincesData.find(p => p.province_code == newWard.province_code) : null;
