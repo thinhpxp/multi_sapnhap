@@ -1,7 +1,7 @@
 // /api/export-data.js
 import { createClient } from '@supabase/supabase-js';
 // BƯỚC 2: THAY ĐỔI CỐT LÕI - Import trực tiếp thay vì đọc tệp
-import { allProvincesData } from '../public/data/check_data.js';
+import { allProvincesData } from '../data/check_data.js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
